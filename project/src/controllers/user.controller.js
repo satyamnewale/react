@@ -16,7 +16,6 @@ const registerUser = asyncHandler(async (req, res) => {
     //return response
 
     const{fullName,email,username,password} = req.body;
-    
     if(
         [fullName,email,username,password].some((field)=> field?.trim()==="")
     ){
@@ -25,7 +24,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
     //mongoose has authority to access data base with its related schema name "User"
 
-    const existedUser = User.findOne({
+    const existedUser =await User.findOne({
         $or: [{ username },{ email }]
     })
 
@@ -34,8 +33,14 @@ const registerUser = asyncHandler(async (req, res) => {
     }
 
     //first property avatar[0] => path
+
     const avatarLocalPath = req.files?.avatar[0]?.path;
-    const coverImageLocalPath = req.files?.coverImage[0]?.path;
+    //  const coverImageLocalPath = req.files?.coverImage[0]?.path;
+
+    let coverImageLocalPath;
+    if(req.files&& Array.isArray(req.files.coverImage) && req.files.coverImage.length>0){
+        coverImageLocalPath = req.files?.coverImage[0]?.path;
+    }
 
     if(!avatarLocalPath){
         throw new ApiError(400, "Avatar file is required");
@@ -60,6 +65,7 @@ const registerUser = asyncHandler(async (req, res) => {
         username: username.toLowerCase(),
     })
 
+    // this is reason why the password and refresh token is not given in response
     const createdUser =await User.findById(user._id).select("-password -refreshToken")
 
     if(!createdUser){

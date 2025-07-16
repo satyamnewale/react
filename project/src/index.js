@@ -6,7 +6,7 @@ import {app} from "./app.js"
 
 // dotenv
 dotenv.config({
-    path: './env',
+    path: './.env',
 })
 
 //db connected
