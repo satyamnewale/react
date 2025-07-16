@@ -16,12 +16,18 @@ app.use(cors({
 app.use(express.json());
 
 //data comming from url to configure
-app(express.urlencoded({extended:true}));
+app.use(express.urlencoded({extended:true}));
 
 //for file keep in public folder
 app.use(express.static("public"));
 
 //to access cookies from user through server ( secure)
 app.use(cookieParser());
+
+
+//routes import
+import userRouter from "./routes/user.routes.js" ;
+//router declaration
+app.use("/api/v1/users", userRouter);
 
 export {app};
